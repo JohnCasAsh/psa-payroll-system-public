@@ -61,9 +61,7 @@ const IS_PROD = process.env.NODE_ENV === "production";
 // The Firebase-hosted site calls the API on another domain (through the HTTPS
 // tunnel), which needs a cross-site cookie: SameSite=None, and that requires
 // Secure. It is also Partitioned (CHIPS), which lets browsers that block
-// third-party cookies keep it scoped to the hosted site. Note: Cloudflare quick
-// tunnels (trycloudflare.com) strip "Partitioned", so through them Incognito
-// still blocks the cookie; a normal browser window works.
+// third-party cookies keep it scoped to the hosted site.
 // Plain-HTTP local / LAN use keeps a Lax cookie, which Secure would break.
 // req.secure reads X-Forwarded-Proto from the tunnel ("trust proxy" below).
 const cookieOpts = (req) => (IS_PROD || req.secure)

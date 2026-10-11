@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PSA Payroll — Register</title>
+    <meta name="description" content="Philippine Statistics Authority — Payroll System Account Registration">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="auth.css">
+</head>
+<body>
+
+<div class="auth">
+    <aside class="auth-brand">
+        <div class="brand-row">
+            <div class="brand-logo" role="img" aria-label="Philippine Statistics Authority seal"></div>
+            <div>
+                <div class="brand-name">Philippine Statistics Authority</div>
+                <div class="brand-office">Regional Statistical Services Office II</div>
+            </div>
+        </div>
+        <div class="brand-hero">
+            <div class="brand-kicker">RSSO II</div>
+            <h2>Payroll System</h2>
+            <p>Pay slips, payroll archives, leave applications and employee records in one place.</p>
+            <ul class="brand-points">
+                <li><span class="pt-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="15" x2="10" y2="15"/></svg></span>Pay slips and payroll archives</li>
+                <li><span class="pt-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M9 16l2 2 4-4"/></svg></span>Leave applications (CS Form No. 6)</li>
+                <li><span class="pt-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="12" y2="17"/></svg></span>201 files and employee records</li>
+            </ul>
+        </div>
+        <div class="brand-foot">Republic of the Philippines</div>
+    </aside>
+
+    <main class="auth-main">
+        <div class="auth-card">
+            <div class="mobile-brand">
+                <div class="brand-logo" role="img" aria-label="Philippine Statistics Authority seal"></div>
+                <div>
+                    <div class="brand-name">Philippine Statistics Authority</div>
+                    <div class="brand-office">Payroll System · RSSO II</div>
+                </div>
+            </div>
+
+            <div class="auth-head">
+                <h1>Create an account</h1>
+                <p>An administrator reviews new accounts before you can sign in.</p>
+            </div>
+
+            <div class="alert" id="alert-box" role="alert"></div>
+
+            <form id="register-form" novalidate>
+
+                <div class="form-group">
+                    <label class="form-label" for="reg-username">Username</label>
+                    <input class="form-input" type="text" id="reg-username"
+                        placeholder="Choose a username" autocomplete="username" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="reg-password">Password</label>
+                    <div class="field field--pw">
+                    <input class="form-input" type="password" id="reg-password" placeholder="Create a password" autocomplete="new-password">
+                    <button type="button" class="pw-toggle" data-for="reg-password" aria-label="Show password" aria-pressed="false">Show</button>
+                </div>
+
+                    <div class="strength-bar-wrap">
+                        <div class="strength-seg" id="seg1"></div>
+                        <div class="strength-seg" id="seg2"></div>
+                        <div class="strength-seg" id="seg3"></div>
+                        <div class="strength-seg" id="seg4"></div>
+                    </div>
+                    <div class="strength-text" id="strength-text"></div>
+
+                    <div class="req-list">
+                        <div class="req-item" id="req-len">8+ characters</div>
+                        <div class="req-item" id="req-upper">Uppercase letter</div>
+                        <div class="req-item" id="req-num">Number</div>
+                        <div class="req-item" id="req-sym">Symbol (!@#…)</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="reg-confirm">Confirm password</label>
+                    <div class="field field--pw">
+                    <input class="form-input" type="password" id="reg-confirm" placeholder="Repeat your password" autocomplete="new-password">
+                    <button type="button" class="pw-toggle" data-for="reg-confirm" aria-label="Show password" aria-pressed="false">Show</button>
+                </div>
+                </div>
+
+                <button type="submit" class="btn-submit" id="btn-register">
+                    <div class="spinner" id="spinner"></div>
+                    <span id="btn-text">Create Account</span>
+                </button>
+
+            </form>
+
+            <div class="footer-row">
+                Already have an account? <a href="login.html">Sign in</a>
+            </div>
+
+            <div class="system-note">
+                Authorized personnel only.<br>
+                All registrations are subject to administrator review.
+            </div>
+
+        </div>
+    </main>
+</div>
+
+<script>
+// Same-origin: Vite proxies /api to the API in dev, nginx does it in production.
+window._PSA_API_URL = '/api';
+</script>
+<script src="security.js"></script>
+<script>
+    const requirements = {
+        len:   { el: document.getElementById('req-len'),   test: p => p.length >= 8 },
+        upper: { el: document.getElementById('req-upper'), test: p => /[A-Z]/.test(p) },
+        num:   { el: document.getElementById('req-num'),   test: p => /[0-9]/.test(p) },
+        sym:   { el: document.getElementById('req-sym'),   test: p => /[^A-Za-z0-9]/.test(p) },
+    };
+
+    const strengthLabels = ['', 'Weak', 'Fair', 'Good', 'Strong'];
+    const strengthColors = ['', '#c0392b', '#d97706', '#2563eb', '#16a34a'];
+
+    const pwdInput = document.getElementById('reg-password');
+    const reqList  = document.querySelector('.req-list');
+
+    function updateReqVisibility(p) {
+        const allMet = Object.values(requirements).every(r => r.test(p));
+        if (allMet) {
+            reqList.classList.remove('visible');
+        } else if (p.length > 0) {
+            reqList.classList.add('visible');
+        }
+    }
+
+    pwdInput.addEventListener('focus', function () {
+        if (this.value.length > 0) reqList.classList.add('visible');
+    });
+
+    pwdInput.addEventListener('blur', function () {
+        const allMet = Object.values(requirements).every(r => r.test(this.value));
+        if (allMet || this.value.length === 0) reqList.classList.remove('visible');
+    });
+
+    pwdInput.addEventListener('input', function () {
+        const p = this.value;
+        let score = 0;
+        for (const [, r] of Object.entries(requirements)) {
+            const met = r.test(p);
+            r.el.classList.toggle('met', met);
+            if (met) score++;
+        }
+        for (let i = 1; i <= 4; i++) {
+            const seg = document.getElementById(`seg${i}`);
+            seg.className = 'strength-seg';
+            if (i <= score) seg.classList.add(`s${score}`);
+        }
+        const txt = document.getElementById('strength-text');
+        txt.textContent = p.length ? strengthLabels[score] : '';
+        txt.style.color = strengthColors[score];
+
+        const bar = document.querySelector('.strength-bar-wrap');
+        if (p.length > 0) {
+            bar.classList.add('visible');
+            reqList.classList.add('visible');
+        } else {
+            bar.classList.remove('visible');
+        }
+        updateReqVisibility(p);
+    });
+
+    function showAlert(msg, type = 'error') {
+        const box = document.getElementById('alert-box');
+        box.className = `alert show ${type}`;
+        box.textContent = msg;
+    }
+    function hideAlert() {
+        document.getElementById('alert-box').className = 'alert';
+    }
+
+    document.getElementById('register-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        hideAlert();
+
+        const username = document.getElementById('reg-username').value.trim();
+        const password = document.getElementById('reg-password').value;
+        const confirm  = document.getElementById('reg-confirm').value;
+        const btn      = document.getElementById('btn-register');
+        const spinner  = document.getElementById('spinner');
+        const btnText  = document.getElementById('btn-text');
+
+        if (!username) { showAlert('Please enter a username.'); return; }
+        if (username.length < 3) { showAlert('Username must be at least 3 characters.'); return; }
+
+        for (const [, r] of Object.entries(requirements)) {
+            if (!r.test(password)) {
+                showAlert('Password does not meet all requirements.');
+                return;
+            }
+        }
+
+        if (password !== confirm) { showAlert('Passwords do not match.'); return; }
+
+        btn.disabled = true;
+        spinner.style.display = 'block';
+        btnText.textContent = 'Creating…';
+
+        const result = await AUTH.registerUser(username, password);
+
+        if (result.success) {
+            showAlert('Account created. Your account is currently pending system validation.', 'success');
+            setTimeout(() => window.location.replace('login.html'), 3000);
+        } else {
+            showAlert(result.error || 'Registration failed.');
+            btn.disabled = false;
+            spinner.style.display = 'none';
+            btnText.textContent = 'Create Account';
+        }
+    });
+</script>
+<script>
+document.querySelectorAll('.pw-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const input = document.getElementById(btn.dataset.for);
+        const show = input.type === 'password';
+        input.type = show ? 'text' : 'password';
+        btn.textContent = show ? 'Hide' : 'Show';
+        btn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+        btn.setAttribute('aria-pressed', String(show));
+    });
+});
+</script>
+</body>
+</html>

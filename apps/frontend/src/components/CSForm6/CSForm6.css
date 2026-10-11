@@ -1,0 +1,457 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   CS Form No. 6 — direct port of cs-form-6-reference.html.
+
+   Every value here is copied from the reference file. The reference is
+   the source of truth: do not "improve" spacing, round numbers, or
+   convert the flex rows to grid. All sizing/spacing is pt; only border
+   widths are px (intentional, as in the reference).
+
+   This file must stay byte-identical to backend/api/src/csform6.css,
+   which the API inlines into the HTML it hands to Puppeteer — that is
+   what makes the screen render and the generated PDF the same.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+@page { size: A4 portrait; margin: 0; }
+
+/* --- The fixed A4 page box. Nothing here may grow. --- */
+.cs-page {
+  width: 210mm;
+  height: 297mm;
+  overflow: hidden;
+  background: #fff;
+  margin: 0 auto;
+  break-inside: avoid;
+  page-break-inside: avoid;
+
+  /* Inline on the reference's page element; kept here so Vite/app
+     defaults (dark color-scheme, centered flex body, root max-width,
+     non-Arial stack) cannot reach the form. */
+  font-family: Arial, Helvetica, sans-serif;
+  color: #000;
+  font-size: 7.6pt;
+  line-height: 1.15;
+  /* Top was 18pt; 14pt (same as the bottom) frees room for the Director's signature. */
+  padding: 14pt 44pt 14pt 44pt;
+  box-sizing: border-box;
+  color-scheme: light;
+  display: block;
+  max-width: none;
+  text-align: left;
+}
+.cs-page *, .cs-page *::before, .cs-page *::after { box-sizing: border-box; }
+
+/* The surrounding app sets a dark-navy body text color that otherwise
+   leaks into labels via element-level rules. Muted colors below are
+   declared later and still win. */
+.cs-page * { color: inherit; }
+
+/*
+  The app styles every <label> as a bold 0.86rem grid form-label. Inside
+  the sheet a label is just a row of plain text at the page's base size,
+  as in the reference. Typography only — display/gap/padding are left
+  alone so .cs-6a label and .cs-drow keep their own layout.
+*/
+.cs-page label {
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+/* --- Controls --- */
+/*
+  Fields are plain white. The reference HTML tinted them #f1f4ff, but on
+  the printed form there is no fill and the tint reads as a stray blue
+  wash. The focus state is a neutral grey — NOT the app's blue ring,
+  which `input:focus` would otherwise paint over the sheet.
+*/
+.cs-page input[type="text"] {
+  border: none;
+  border-bottom: 1px solid #000;
+  border-radius: 0;
+  background: transparent;
+  font: inherit;
+  color: #000;
+  outline: none;
+  padding: 0 2pt;
+  min-width: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  box-shadow: none;
+}
+.cs-page input[type="text"]:focus {
+  background: #f2f2f2;
+  box-shadow: none;
+  border-color: #000;
+  outline: none;
+}
+/* Read-only fields cannot be typed in, so they get no focus tint. */
+.cs-page input[type="text"][readonly]:focus { background: transparent; }
+
+.cs-page input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 0;
+  /* padding:0 is not in the reference — it is needed here because the
+     surrounding app sets a global `input { padding: 11px 13px }`, whose
+     26px of horizontal padding would otherwise force the 8pt box out to
+     28px and inflate every checkbox row off the page. */
+  padding: 0;
+  /* 10pt, up from the reference HTML's 8pt — the official form's boxes are
+     chunkier than the text line. This grows every checkbox row from 8.7pt
+     to 10pt; there is ~56pt of slack on the page, so the one-page fit is
+     unaffected (re-verify if this is ever increased again). */
+  width: 10pt;
+  height: 10pt;
+  min-width: 10pt;
+  min-height: 10pt;
+  max-width: 10pt;
+  max-height: 10pt;
+  border: 1px solid #000;
+  border-radius: 0;
+  background: #fff;
+  flex: none;
+  position: relative;
+  cursor: pointer;
+  box-shadow: none;
+}
+/* Checked = a pen tick inside the box. The box outline moves into the SVG (same
+   1px weight) so the tick can span the full box; size stays fixed at 10pt. */
+.cs-page input[type="checkbox"]:checked {
+  border-width: 0;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Crect x='0.75' y='0.75' width='18.5' height='18.5' fill='%23fff' stroke='%23000' stroke-width='1.5'/%3E%3Cpath d='M4.6 10.4 8.3 14.1 15.6 5.6' fill='none' stroke='%23000' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+  box-shadow: none;
+}
+
+/* Print mode: same geometry, dead interaction. */
+.cs-page.is-print input[type="text"],
+.cs-page.is-print input[type="checkbox"] { cursor: default; }
+
+.cs-page a, .cs-page a:hover { color: #000; }
+
+/* --- Print: only chrome changes. Geometry is identical. --- */
+@media print {
+  .cs-page { margin: 0; box-shadow: none; }
+  .cs-page input[type="text"]:focus { background: transparent; }
+  .cs-page * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+
+/* ── header ─────────────────────────────────────────────────────────── */
+/* min-height reserves the space the absolutely-positioned logo would have
+   occupied in flow — without it the header collapses and the logo spills
+   over the title below. Keep it in step with .cs-logo's height. */
+.cs-hdr {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  position: relative; min-height: 66pt;
+}
+.cs-formid { font-size: 6.5pt; line-height: 1.35; font-style: italic; font-weight: bold; width: 88pt; white-space: nowrap; }
+/*
+  The logo is taken OUT of the flex flow. In flow it competes for width
+  with the agency block, so every change to its size shoved the centred
+  title sideways. Absolutely positioned, it can be resized freely and the
+  title stays put.
+*/
+/* Sits in the clear gap between the form-ID text (ends ~80pt) and the
+   first agency glyph (~162pt), pulled left so there is an obvious break
+   before "PHILIPPINE", and raised slightly toward the top edge.
+   Re-measure if the logo size or either text changes. */
+.cs-logo {
+  position: absolute;
+  left: 80pt;
+  top: -6pt;
+  width: 72pt;
+  height: 72pt;
+  object-fit: contain;
+}
+.cs-agency { text-align: center; flex: 1; margin-top: 19pt; margin-left: 41pt; }
+/*
+  Weights and the serif face are taken from the official PDF, not from
+  the reference HTML: on the real form "Republic of the Philippines" is
+  bold sans, the agency name is a larger SERIF, and the address line is
+  regular sans.
+*/
+.cs-agency-1 { font-size: 9.5pt; font-weight: bold; }
+.cs-agency-2 {
+  margin-top: 4pt;
+  font-family: "Times New Roman", Times, serif;
+  font-size: 13.5pt;
+  font-weight: normal;
+  letter-spacing: .3pt;
+}
+.cs-agency-3 { font-size: 8pt; font-weight: normal; }
+.cs-stamp {
+  font-size: 5.5pt; width: 78pt; height: 21pt; border: 1px solid #bbb; color: #555;
+  display: flex; align-items: center; justify-content: center; text-align: center;
+  margin-top: 35pt;
+}
+.cs-title { text-align: center; font-size: 15pt; font-weight: bold; margin: 13pt 0 4pt; }
+
+/* ── form box, rows, columns ───────────────────────────────────────────
+   Border weight hierarchy, read off the official PDF (the reference HTML
+   used a flat 1px everywhere):
+     2px — outer box and the two section bands ONLY
+     1px — every internal rule, including the centre column divider
+   The column divider is deliberately thin: at 2px it reads as a heavy
+   line splitting the form down the middle, which the PDF does not have.
+   Rows that sit directly above a section band carry no bottom border;
+   the band supplies that edge itself, so the two never stack into 4px. */
+/* All four sides: the director's block is the last row INSIDE the box,
+   so the box closes itself rather than borrowing the last row's rule. */
+.cs-box { border: 2px solid #000; }
+.cs-row { display: flex; border-bottom: 1px solid #000; }
+.cs-row-nb { display: flex; }
+.cs-row-thick { display: flex; border-bottom: 4px solid #000; }
+/* Section rows all share one divider position: 53.5%, which lands the
+   rule directly under the SECOND "P" of "APPLICATION" in the
+   "6.  DETAILS OF APPLICATION" band (that glyph centres at 53.46% of the
+   form box). If the band's text or font size ever changes, re-measure —
+   the alignment is to a specific glyph, not to a round number. */
+.cs-col-l { flex: 0 0 53.75%; max-width: 53.75%; min-width: 0; overflow: hidden; border-right: 2px solid #000; }
+.cs-col-r { flex: 0 0 46.25%; max-width: 46.25%; min-width: 0; overflow: hidden; }
+
+/* Row 1 (Office / Name) does NOT use the section split. Its left column
+   is narrower so "2. NAME" lands directly above "4. POSITION" in row 2 —
+   both start at 36%. It also carries no divider; the two fields are
+   separated by whitespace alone. */
+.cs-col-l.cs-r1 { flex-basis: 36%; max-width: 36%; border-right: none; }
+.cs-col-r.cs-r1 { flex-basis: 64%; max-width: 64%; }
+
+/* The centre divider runs from the "6. DETAILS" band down through the
+   7.A/7.B row, then stops: 7.C/7.D has no divider between its halves. */
+.cs-col-l.cs-nodiv { border-right: none; }
+
+.cs-banner {
+  border-top: 4px solid #000;
+  border-bottom: 4px solid #000;
+  text-align: center; font-weight: bold; font-size: 9pt; padding: 2.5pt 0;
+}
+/* Extra top padding drops the subhead away from the band/rule above it,
+   matching the breathing room on the reference. */
+.cs-sub { padding: 5pt 5pt 2.5pt; font-weight: bold; }
+
+/* Row 1 — office / name */
+.cs-p1 { padding: 3pt 5pt 2pt; }
+/* Fields 1–4 (Office, Name, Date of Filing, Position) carry a larger
+   value font than the 7.6pt base, as on the reference; the inputs are a
+   little taller so the bigger text is not cramped. Field 5 (Salary)
+   deliberately stays at base size. */
+/* NOTE the `.cs-page input…` form: the base control rule uses
+   `font: inherit`, whose shorthand resets font-size. A plain `.cs-in-office`
+   selector loses to it, so these must match its specificity to win. */
+/* Fields 1 and 2 carry no underline — the value sits on bare paper. */
+.cs-page input.cs-in-office { width: 100%; margin-top: 8pt; height: 16pt; font-size: 12pt; border-bottom: none; }
+.cs-nm-hdr { display: flex; align-items: baseline; }
+.cs-nm-lead { white-space: nowrap; }
+.cs-nm-sub { flex: 1; display: flex; justify-content: space-around; }
+.cs-nm-inputs { display: flex; gap: 4pt; margin-top: 8pt; }
+.cs-page .cs-nm-inputs input { flex: 1; height: 16pt; text-align: left; font-size: 12pt; border-bottom: none; }
+/* Middle name is narrower than Last/First and pushed right, so it sits
+   under its "(Middle)" heading rather than butting up against First. */
+.cs-page .cs-nm-inputs input:last-child { flex: 0 0 24%; margin-left: 14pt; }
+
+/* Row 2 — filing / position / salary */
+/* No bottom border — the section 6 band directly below supplies it. */
+.cs-row2 { display: flex; padding: 4pt 5pt; align-items: center; gap: 6pt; }
+.cs-fg { display: flex; align-items: center; gap: 4pt; }
+.cs-fg > span { white-space: nowrap; }
+.cs-fg input { flex: 1; height: 11pt; }
+/* Split chosen so the longest realistic values all fit at 10.5pt:
+   "September 30, 2026" / "Administrative Assistant III" / "₱135,968.00". */
+.cs-w36 { width: 37%; }
+.cs-w41 { width: 38%; }
+.cs-w23 { width: 25%; }
+/* Fields 3, 4 and 5 carry an enlarged value font, a step below 1–2 so the row fits. */
+.cs-page .cs-w36 input,
+.cs-page .cs-w41 input,
+.cs-page .cs-w23 input { height: 15pt; font-size: 10.5pt; }
+
+/* 6.A — leave types. nowrap is load-bearing: each row is exactly one
+   line, which is what keeps the sheet on a single page. Long citations
+   are clipped by the column's overflow:hidden, as in the reference. */
+.cs-6a { padding: 6pt 4pt 6pt 6pt; display: flex; flex-direction: column; gap: 4.4pt; }
+.cs-6a label { display: flex; align-items: center; gap: 5pt; white-space: nowrap; }
+/* Sized so the longest citation (Mandatory/Forced Leave) fits on its line unclipped. */
+.cs-cite { font-size: 5.6pt; letter-spacing: -0.1pt; }
+.cs-others { margin-top: 4pt; }
+.cs-6a > input[type="text"] { width: 78%; height: 10pt; margin-left: 2pt; }
+
+/* 6.B — details */
+.cs-6b { padding: 6pt 6pt 6pt 8pt; display: flex; flex-direction: column; gap: 4.4pt; }
+.cs-ital { font-style: italic; }
+.cs-ital-mt { font-style: italic; margin-top: 2pt; }
+.cs-drow { display: flex; align-items: center; gap: 5pt; padding-left: 8pt; }
+.cs-drow > span { white-space: nowrap; }
+.cs-drow input[type="text"] { flex: 1; height: 10pt; }
+.cs-6b > input[type="text"] { width: 100%; height: 10pt; }
+
+/* 6.C / 6.D */
+.cs-6c { padding: 5pt 5pt 4pt 16pt; display: flex; flex-direction: column; gap: 5pt; }
+.cs-6c input { width: 74%; height: 11pt; border-bottom-color: #9a9a9a; text-align: center; }
+.cs-incl { padding-left: 6pt; font-weight: bold; }
+/* Wraps the Inclusive Dates input + its picker button on one row. The
+   button sits in the space to the right of the 74%-wide input, and the
+   popup is position:absolute so opening it never shifts this row or
+   anything below it. */
+.cs-incl-row { display: flex; align-items: center; gap: 4pt; position: relative; }
+.cs-incl-pick { position: relative; display: inline-flex; }
+.cs-6d { padding: 5pt 5pt 4pt 8pt; display: flex; flex-direction: column; gap: 6pt; }
+.cs-sig6d { text-align: center; margin-top: 8pt; }
+.cs-page .cs-sig6d input { width: 94%; height: 11pt; display: block; margin: 0 auto; border-bottom: none; text-align: center; }
+.cs-sig6d .cs-rule { border-top: 1px solid #000; width: 94%; margin: 0 auto; }
+.cs-cap { margin-top: 1pt; }
+
+/* 7.A */
+.cs-7a { padding: 5pt 10pt 6pt 10pt; display: flex; flex-direction: column; }
+.cs-asof { text-align: center; display: flex; align-items: center; justify-content: center; gap: 4pt; }
+.cs-asof input { width: 96pt; height: 10pt; }
+.cs-ctab { width: 88%; margin: 6pt auto 0; border-collapse: collapse; font-size: 7.4pt; }
+/* 2px, not 1.5px — Chromium rounds a 1.5px border down to 1px, so the
+   table came out no thicker than an ordinary rule. */
+.cs-ctab td { border: 2px solid #000; }
+.cs-ctab .cs-th { text-align: center; padding: 2pt 0; }
+.cs-ctab .cs-c0 { width: 44%; }
+.cs-ctab .cs-rl { padding: 1pt 4pt; font-style: italic; text-align: center; }
+.cs-ctab .cs-vc { padding: 0; }
+.cs-ctab .cs-vc input { width: 100%; height: 11pt; text-align: center; background: transparent; border-bottom: none; }
+
+/* 7.B */
+/* Tighter gap than the reference's 6pt: 7.B carries four writing lines
+   and the rows were sitting too far apart. */
+.cs-7b { padding: 5pt 6pt 6pt 8pt; display: flex; flex-direction: column; gap: 3.5pt; }
+.cs-pl8 { padding-left: 8pt; }
+.cs-pl8 input { width: 100%; height: 10pt; }
+
+/* shared signature stack for 7.A / 7.B */
+.cs-sig { text-align: center; margin-top: auto; }
+/* 17pt clears the credits table for the HR signature (29pt tall, dipping
+   13pt onto the name). 7.A is the taller column, so this sets the row height. */
+.cs-sig-a { padding-top: 17pt; }
+/* cs-l1 = printed name, cs-l2 = designation. No rule between them (the
+   only line in a signature stack is the black cs-rule beneath both), and
+   the designation prints smaller and bold than the name.
+   NOTE the `input.cs-l*` form: the base control rule uses `font: inherit`,
+   whose shorthand resets size and weight, so these must match its
+   specificity to win. */
+.cs-sig input.cs-l1 { width: 86%; height: 10pt; text-align: center; display: block; margin: 0 auto; border-bottom: none; }
+.cs-sig input.cs-l2 { width: 86%; height: 10pt; text-align: center; display: block; margin: 1pt auto 0; border-bottom: none; font-size: 6.5pt; font-weight: bold; }
+.cs-sig .cs-rule { border-top: 1px solid #000; width: 86%; margin: 0 auto; }
+
+/* 7.C / 7.D */
+.cs-7c { padding: 5pt 5pt 4pt 20pt; display: flex; flex-direction: column; gap: 3.5pt; }
+.cs-arow { display: flex; align-items: center; gap: 5pt; }
+.cs-arow input { width: 44pt; height: 10pt; }
+.cs-7d { padding: 5pt 6pt 4pt 8pt; display: flex; flex-direction: column; gap: 3.5pt; }
+.cs-7d input { width: 100%; height: 10pt; }
+
+/* footer — a full-width row inside the box, signature stack centred in it.
+   The generous top padding is the gap above the Director's block seen on
+   the reference; it is sized to the page's remaining slack, so re-measure
+   before growing anything else. */
+/* Bottom padding gives "(Authorized Official)" clearance from the box's
+   bottom edge; top padding is the gap above the Director's block. Both
+   are sized to the page's remaining slack — re-measure before growing
+   anything else on the sheet. */
+/* 17pt top clears the 7.C / 7.D lines for the Director's signature (29pt,
+   dipping 13pt). With .cs-sig-a and the 14pt page top this leaves ~1pt of
+   slack under the box — re-measure before growing anything else. */
+.cs-foot { padding: 17pt 0 2pt; text-align: center; }
+.cs-foot input.cs-l1 { width: 200pt; height: 10pt; text-align: center; display: block; margin: 0 auto; border-bottom: none; }
+.cs-foot input.cs-l2 { width: 200pt; height: 10pt; text-align: center; display: block; margin: 1pt auto 0; border-bottom: none; font-size: 6.5pt; font-weight: bold; }
+.cs-foot .cs-rule { border-top: 1px solid #000; width: 200pt; margin: 0 auto; }
+
+/*
+  Signature images are an application addition, not part of the
+  reference. They are absolutely positioned inside a zero-height box so
+  they overlay the signature area without changing ANY geometry — a
+  signed and an unsigned sheet are dimensionally identical.
+*/
+.cs-sig-img { position: relative; height: 0; }
+.cs-sig-img img {
+  position: absolute; left: 50%; bottom: 0; transform: translateX(-50%);
+  max-height: 20pt; max-width: 86%; object-fit: contain;
+}
+/* 6.D has clear space above the line, so the applicant's signature is larger
+   and dips onto the printed name the way a pen signature does. */
+.cs-sig6d .cs-sig-img img { max-height: 34pt; bottom: -5pt; }
+/* Section 7 signatures (HR, Chief, Director) all share one size and sit over
+   the printed name the same way, so they stay clear of the table and lines above. */
+.cs-sig .cs-sig-img img,
+.cs-foot .cs-sig-img img { max-height: 29pt; bottom: -13pt; }
+
+/* History appendix — a separate page, outside the fixed A4 box, so it
+   cannot affect the form's one-page fit. */
+.cs-history-page { page-break-before: always; padding: 18pt 22pt; font-family: Arial, Helvetica, sans-serif; color: #000; background: #fff; }
+.cs-history-bar { background: #c9c9c9; font-weight: bold; font-size: 9pt; text-align: center; padding: 4pt 0; margin-bottom: 8pt; }
+.cs-history-item { margin-bottom: 8pt; font-size: 8pt; }
+.cs-history-item .cs-h-label { font-weight: bold; }
+.cs-history-item .cs-h-meta { color: #444; font-size: 7.5pt; }
+
+/* ── 6.C date picker (screen only, never printed) ───────────────────────
+   The app styles every <button> navy-on-white with large padding; every
+   rule here uses two classes so it outranks both `button` and `button:hover`. */
+.cs-incl-pick .cs-dp-trigger {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 20px; height: 20px; padding: 0;
+  border: 1px solid #c3ccda; border-radius: 5px;
+  background: #fff; color: #0d2346;
+  box-shadow: none; cursor: pointer;
+  transition: background .12s, color .12s, border-color .12s;
+}
+.cs-incl-pick .cs-dp-trigger:hover,
+.cs-incl-pick .cs-dp-trigger.is-open { background: #0d2346; border-color: #0d2346; color: #fff; box-shadow: none; }
+.cs-incl-pick .cs-dp-trigger:focus-visible { outline: 2px solid #4a90d9; outline-offset: 1px; }
+
+.cs-dp {
+  width: 272px; box-sizing: border-box;
+  padding: 12px 12px 10px;
+  background: #fff; color: #141e2e;
+  border: 1px solid #e2e6ed; border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(13,35,70,.18), 0 2px 6px rgba(13,35,70,.08);
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; font-size: 13px;
+}
+.cs-dp-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.cs-dp-title { font-weight: 700; font-size: 14px; color: #0d2346; }
+.cs-dp .cs-dp-nav {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; padding: 0; border: 0; border-radius: 8px;
+  background: transparent; color: #4e5e72; box-shadow: none;
+}
+.cs-dp .cs-dp-nav:hover { background: #eef2f8; color: #0d2346; box-shadow: none; }
+
+.cs-dp-grid { display: grid; grid-template-columns: repeat(7, 1fr); row-gap: 2px; }
+.cs-dp-wd { text-align: center; font-size: 11px; font-weight: 600; color: #4e5e72; padding: 4px 0 6px; }
+.cs-dp-wd.is-weekend { color: #a7b0bd; }
+
+/* The range band sits on the cell; the circle on the button. Start and end
+   cells carry half a band so it joins the circles cleanly. */
+.cs-dp-cell { display: flex; justify-content: center; }
+.cs-dp-cell.in-range { background: #e6ecf6; }
+.cs-dp-cell.is-start { background: linear-gradient(to right, transparent 50%, #e6ecf6 50%); }
+.cs-dp-cell.is-end   { background: linear-gradient(to left,  transparent 50%, #e6ecf6 50%); }
+.cs-dp-cell.is-start.is-end { background: none; }
+
+.cs-dp .cs-dp-day {
+  position: relative;
+  width: 32px; height: 32px; padding: 0; border: 0; border-radius: 50%;
+  background: transparent; color: #141e2e; box-shadow: none;
+  font-size: 13px; font-weight: 500; letter-spacing: 0;
+}
+.cs-dp .cs-dp-day:hover { background: #d6e0f1; color: #0d2346; box-shadow: none; }
+.cs-dp .cs-dp-day.is-weekend { color: #a7b0bd; }
+.cs-dp .cs-dp-day.is-today { font-weight: 700; color: #0d2346; }
+.cs-dp .cs-dp-day.is-today::after {
+  content: ""; position: absolute; left: 50%; bottom: 4px;
+  width: 4px; height: 4px; margin-left: -2px; border-radius: 50%; background: #c0392b;
+}
+.cs-dp .cs-dp-day.is-start,
+.cs-dp .cs-dp-day.is-end { background: #0d2346; color: #fff; font-weight: 700; }
+.cs-dp .cs-dp-day.is-start.is-today::after,
+.cs-dp .cs-dp-day.is-end.is-today::after { background: #fff; }
+.cs-dp .cs-dp-day:focus-visible { outline: 2px solid #4a90d9; outline-offset: 1px; }
+
+.cs-dp-foot {
+  margin-top: 10px; padding-top: 9px; border-top: 1px solid #edf0f4;
+  font-size: 12px; line-height: 1.45; color: #4e5e72; min-height: 34px;
+}
+.cs-dp-foot strong { color: #0d2346; font-weight: 700; }

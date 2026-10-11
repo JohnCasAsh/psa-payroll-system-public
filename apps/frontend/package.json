@@ -1,0 +1,53 @@
+{
+  "name": "psa-payroll-frontend",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "main": "electron/main.cjs",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build && node scripts/inject-api-url.mjs && node scripts/inject-sri.mjs",
+    "preview": "vite preview --host 0.0.0.0",
+    "electron:dev": "electron .",
+    "electron:build": "electron-builder --win --x64"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^6.0.2",
+    "docx": "^9.0.3",
+    "exceljs": "^4.4.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "recharts": "^2.15.4",
+    "vite": "8.0.16"
+  },
+  "devDependencies": {
+    "electron": "^31.0.0",
+    "electron-builder": "^24.0.0",
+    "png2icons": "^2.0.1"
+  },
+  "overrides": {
+    "uuid": "^11.1.1"
+  },
+  "build": {
+    "appId": "com.psa.payroll",
+    "productName": "PSA Payroll System",
+    "directories": {
+      "output": "dist-electron"
+    },
+    "files": [
+      "electron/**/*",
+      "dist/**/*"
+    ],
+    "win": {
+      "target": "nsis",
+      "artifactName": "PSAPayrollSetup.exe",
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico"
+    }
+  }
+}

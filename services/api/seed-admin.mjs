@@ -1,6 +1,6 @@
 // One-time script: creates the admin user in MySQL
 // Usage: node seed-admin.mjs <password>
-// Example: node seed-admin.mjs Admin@12345
+// Example: node --env-file=.env seed-admin.mjs "YourStrongPassword!1"  (pick your own)
 
 import bcrypt from "bcryptjs";
 import mysql from "mysql2/promise";

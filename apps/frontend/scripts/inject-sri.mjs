@@ -32,12 +32,23 @@ function addIntegrity(html, attr, urlPattern) {
   console.log("Injected SRI integrity attributes into dist/index.html");
 }
 
-// Static pages referencing the shared, unhashed security.js
+// security.js and auth.css keep fixed names, so a browser holding an older copy
+// would reuse it, and the old security.js then fails the integrity check (sign-in
+// silently does nothing). A ?v=<content hash> makes every change a new address.
+function versioned(file) {
+  const assetPath = join(distDir, file);
+  if (!existsSync(assetPath)) return file;
+  return `${file}?v=${createHash("sha256").update(readFileSync(assetPath)).digest("hex").slice(0, 10)}`;
+}
+
+// Static pages referencing the shared, unhashed security.js and auth.css
 for (const file of ["login.html", "register.html"]) {
   const path = join(distDir, file);
   if (!existsSync(path)) continue;
   let html = readFileSync(path, "utf-8");
   html = addIntegrity(html, "src", /<script[^>]*\ssrc="(security\.js)"[^>]*>/g);
+  html = html.replace(/(\ssrc=")security\.js(")/g, `$1${versioned("security.js")}$2`);
+  html = html.replace(/(\shref=")auth\.css(")/g, `$1${versioned("auth.css")}$2`);
   writeFileSync(path, html);
-  console.log(`Injected SRI integrity attribute into dist/${file}`);
+  console.log(`Injected SRI integrity and cache-busting versions into dist/${file}`);
 }
